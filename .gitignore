@@ -12,10 +12,8 @@ node_modules
 ._*
 
 # build / deploy ignores
-dist/
 tmp/
 log/
 public/build
 
 *.zip
-

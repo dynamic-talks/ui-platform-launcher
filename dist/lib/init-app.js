@@ -74,6 +74,6 @@ var _cliArgs = require('cli-args');
 
 var _cliArgs2 = _interopRequireDefault(_cliArgs);
 
-var _uiRouter = require('./lib/router/ui-router.factory');
+var _uiRouter = require('./router/ui-router.factory');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }

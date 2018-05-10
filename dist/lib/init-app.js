@@ -31,7 +31,7 @@ exports.default = function (_ref) {
 
   app.use(_express2.default.json());
   app.use(_express2.default.urlencoded({ extended: false }));
-  app.use(_express2.default.static(_path2.default.join(__dirname, '..', '..', 'public')));
+  app.use(_express2.default.static(_path2.default.join(rootPath, 'public')));
 
   app.use('/', (0, _uiRouter.uiRouterFactory)({
     rootDir: rootPath,

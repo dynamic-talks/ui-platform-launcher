@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "express": "~4.16.0",
+    "glob": "^7.1.2",
     "http-errors": "~1.6.2",
     "libioc": "^1.0.6"
   },

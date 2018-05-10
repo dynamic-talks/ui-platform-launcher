@@ -13,6 +13,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _glob = require('glob');
+
+var _glob2 = _interopRequireDefault(_glob);
+
 var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
@@ -29,7 +33,7 @@ function resolvePagesSettings(rootDir) {
   var cwd = _path2.default.join(rootDir, 'src', 'ui');
   return {
     cwd: cwd,
-    routes: glob.sync('**/*.page.js', { cwd: cwd }).map(function (pagePath) {
+    routes: _glob2.default.sync('**/*.page.js', { cwd: cwd }).map(function (pagePath) {
       var dirPath = _path2.default.dirname(pagePath, '.page.js');
       var name = _path2.default.basename(pagePath, '.page.js');
       var routePath = _path2.default.join(dirPath, name + '.route.js');

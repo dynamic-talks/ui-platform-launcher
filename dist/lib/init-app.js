@@ -55,7 +55,7 @@ exports.default = function (_ref) {
     console.error(err);
   });
 
-  module.exports = app;
+  return app;
 };
 
 var _path = require('path');

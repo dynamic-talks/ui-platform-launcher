@@ -3,29 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.initApp = initApp;
 
-var _path = require('path');
-
-var _path2 = _interopRequireDefault(_path);
-
-var _httpErrors = require('http-errors');
-
-var _httpErrors2 = _interopRequireDefault(_httpErrors);
-
-var _express = require('express');
-
-var _express2 = _interopRequireDefault(_express);
-
-var _cliArgs = require('cli-args');
-
-var _cliArgs2 = _interopRequireDefault(_cliArgs);
-
-var _uiRouter = require('./lib/router/ui-router.factory');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function initApp(_ref) {
+exports.default = function (_ref) {
   var rootPath = _ref.rootPath,
       serverIoCFactory = _ref.serverIoCFactory;
 
@@ -77,4 +56,24 @@ function initApp(_ref) {
   });
 
   module.exports = app;
-}
+};
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
+var _httpErrors = require('http-errors');
+
+var _httpErrors2 = _interopRequireDefault(_httpErrors);
+
+var _express = require('express');
+
+var _express2 = _interopRequireDefault(_express);
+
+var _cliArgs = require('cli-args');
+
+var _cliArgs2 = _interopRequireDefault(_cliArgs);
+
+var _uiRouter = require('./lib/router/ui-router.factory');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }

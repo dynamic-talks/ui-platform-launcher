@@ -14,6 +14,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mapToString = function mapToString(array, mapper) {
   return array.map(mapper).join('\n');
 };
+var isProduction = process.env.NODE_ENV === 'production';
 
 var renderHtmlTemplate = function renderHtmlTemplate(_ref) {
   var _ref$headerTitle = _ref.headerTitle,
@@ -36,7 +37,7 @@ var renderHtmlTemplate = function renderHtmlTemplate(_ref) {
         media = _ref3.media,
         sizes = _ref3.sizes,
         charset = _ref3.charset;
-    return '<link rel="' + rel + '" href="' + href + '" ' + (type && 'type=' + type) + ' ' + (media && 'media=' + media) + ' ' + (sizes && 'sizes=' + sizes) + ' ' + (charset && 'charset=' + charset) + '>';
+    return '<link rel="' + rel + '" href="' + href + '" ' + (type ? 'type="' + type + '"' : '') + ' ' + (media ? 'media="' + media + '"' : '') + ' ' + (sizes ? 'sizes="' + sizes + '"' : '') + ' ' + (charset ? 'charset="' + charset + '"' : '') + '>';
   }) + '\n  </head>\n  <body>\n    ' + modulesStr + '\n    \n    <script>window.__CONFIG__ = ' + configStr + '</script>\n    <script>window.__STATE__ = ' + stateStr + '</script>\n    \n    ' + mapToString(scripts, function (src) {
     return '<script type="text/javascript" src="' + src + '"></script>';
   }) + '\n  </body>\n</html>\n';
@@ -104,6 +105,20 @@ var renderHtml = function renderHtml(_ref4) {
 
 var renderApp = function renderApp(res, app, routeConfig) {
   return function (htmlDocOptions) {
+    if (isProduction) {
+      var manifestManager = app._ioc.resolve('manifestManager');
+      var prodCss = manifestManager.get(routeConfig.namespace + '.css');
+      if (!htmlDocOptions.linkTags) htmlDocOptions.linkTags = [];
+      if (prodCss) {
+        htmlDocOptions.linkTags.push({
+          href: prodCss,
+          rel: 'stylesheet',
+          type: 'text/css'
+        });
+      }
+      console.log('Manifest manager is about to set ' + prodCss + ' style value');
+    }
+
     app.run({}).then(function (modules) {
       res.send(renderHtml({
         modules: modules,

@@ -7,6 +7,7 @@
     "build": "gulp build"
   },
   "dependencies": {
+    "cli-args": "^2.0.0",
     "express": "~4.16.0",
     "glob": "^7.1.2",
     "http-errors": "~1.6.2",

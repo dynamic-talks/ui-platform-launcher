@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (_ref) {
   var rootPath = _ref.rootPath,
       serverIoCFactory = _ref.serverIoCFactory,
-      manifestPath = _ref.manifestPath;
+      assetsManifestPath = _ref.assetsManifestPath;
 
   var args = (0, _cliArgs2.default)(process.argv.slice(2));
   var app = (0, _express2.default)();
@@ -28,7 +28,7 @@ exports.default = function (_ref) {
   var iocContainer = serverIoCFactory({
     baseConfigPath: baseConfigPath,
     configPath: configPath,
-    manifestPath: manifestPath
+    assetsManifestPath: assetsManifestPath
   });
 
   app.use(_express2.default.json());

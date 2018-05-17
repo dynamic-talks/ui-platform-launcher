@@ -116,7 +116,6 @@ var renderApp = function renderApp(res, app, routeConfig) {
           type: 'text/css'
         });
       }
-      console.log('Manifest manager is about to set ' + prodCss + ' style value');
     }
 
     app.run({}).then(function (modules) {

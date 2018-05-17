@@ -111,7 +111,7 @@ var renderApp = function renderApp(res, app, routeConfig) {
       if (!htmlDocOptions.linkTags) htmlDocOptions.linkTags = [];
       if (prodCss) {
         htmlDocOptions.linkTags.push({
-          href: prodCss,
+          href: '/build/' + prodCss,
           rel: 'stylesheet',
           type: 'text/css'
         });

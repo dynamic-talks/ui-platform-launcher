@@ -25,7 +25,7 @@ var _defaultUiRouteHandler2 = _interopRequireDefault(_defaultUiRouteHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _require = require('ui-platform-core/dist/lib/pages/pages-settings.resolver'),
+var _require = require('ui-platform-core/dist/lib/path-resolvers/pages-settings.resolver'),
     resolvePagesSettings = _require.resolvePagesSettings;
 
 var uiRouterFactory = exports.uiRouterFactory = function uiRouterFactory(_ref) {

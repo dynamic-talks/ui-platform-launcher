@@ -1,0 +1,11 @@
+const cliArgs = require('cli-args');
+const initMultipleApp = require('../lib/init-multiple-apps').default;
+const launchApp = require('./www');
+
+const args = cliArgs(process.argv.slice(2));
+
+
+
+launchApp(initMultipleApp({
+  appsPath: args.p
+}));

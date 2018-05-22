@@ -15,39 +15,43 @@ exports.default = function (_ref) {
 
   // add static middleware with each `public` app folder
   appSettings.forEach(function (_ref2) {
-    var rootPath = _ref2.rootPath;
+    var rootDir = _ref2.rootDir;
 
-    app.use(_express2.default.static(_path2.default.join(rootPath, 'public')));
+    app.use(_express2.default.static(_path2.default.join(rootDir, 'public')));
   });
 
   // initialize app pages
   appSettings.forEach(function (_ref3) {
-    var rootPath = _ref3.rootPath,
+    var rootDir = _ref3.rootDir,
         name = _ref3.name,
         version = _ref3.version,
         params = _ref3.params;
 
-    var baseConfigPath = _path2.default.join(rootPath, 'config', 'base.yaml');
-    var configPath = params.configPath,
-        assetsManifestPath = params.assetsManifestPath;
+    var baseConfigPath = _path2.default.join(rootDir, 'config', 'base.yaml');
+    var configPath = params.configPath;
+    // todo: think about better solution
+
+    var _require = require(rootDir + '/node_modules/ui-platform-core/dist/lib/ui-application/server.ioc-container'),
+        createServerIocContainer = _require.createServerIocContainer;
 
     var absConfigPath = void 0;
 
     if (configPath) {
-      absConfigPath = _path2.default.join(rootPath, configPath);
+      absConfigPath = _path2.default.join(rootDir, configPath);
     } else {
       absConfigPath = baseConfigPath;
     }
 
     // initialize root IoC container
-    var iocContainer = (0, _server.createServerIocContainer)({
+    var iocContainer = createServerIocContainer({
       configPath: absConfigPath,
-      baseConfigPath: baseConfigPath,
-      assetsManifestPath: assetsManifestPath
+      // todo: `build-manifest.json` name is hardcored, should be configured somehow
+      assetsManifestPath: _path2.default.join(rootDir, 'build-manifest.json'),
+      baseConfigPath: baseConfigPath
     });
 
     app.use('/' + name, (0, _uiRouter.uiRouterFactory)({
-      rootDir: rootPath,
+      rootDir: rootDir,
       iocContainer: iocContainer
     }));
   });
@@ -83,8 +87,6 @@ var _httpErrors2 = _interopRequireDefault(_httpErrors);
 var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
-
-var _server = require('ui-platform-core/dist/lib/ui-application/server.ioc-container');
 
 var _mutipleAppsSettings = require('ui-platform-core/dist/lib/path-resolvers/mutiple-apps-settings.resolver');
 

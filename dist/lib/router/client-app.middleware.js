@@ -25,7 +25,8 @@ var renderHtmlTemplate = function renderHtmlTemplate(_ref) {
       configStr = _ref.configStr,
       scripts = _ref.scripts,
       metaTags = _ref.metaTags,
-      linkTags = _ref.linkTags;
+      linkTags = _ref.linkTags,
+      manifestStr = _ref.manifestStr;
   return '\n<!DOCTYPE html>\n<html lang="' + docLang + '">\n  <head>\n    <meta charset="utf-8">\n    <title>' + headerTitle + '</title>\n    \n    ' + mapToString(metaTags, function (_ref2) {
     var name = _ref2.name,
         content = _ref2.content;
@@ -38,7 +39,7 @@ var renderHtmlTemplate = function renderHtmlTemplate(_ref) {
         sizes = _ref3.sizes,
         charset = _ref3.charset;
     return '<link rel="' + rel + '" href="' + href + '" ' + (type ? 'type="' + type + '"' : '') + ' ' + (media ? 'media="' + media + '"' : '') + ' ' + (sizes ? 'sizes="' + sizes + '"' : '') + ' ' + (charset ? 'charset="' + charset + '"' : '') + '>';
-  }) + '\n  </head>\n  <body>\n    ' + modulesStr + '\n    \n    <script>window.__CONFIG__ = ' + configStr + '</script>\n    <script>window.__STATE__ = ' + stateStr + '</script>\n    \n    ' + mapToString(scripts, function (src) {
+  }) + '\n  </head>\n  <body>\n    ' + modulesStr + '\n    \n    <script>window.__CONFIG__ = ' + configStr + '</script>\n    <script>window.__STATE__ = ' + stateStr + '</script>\n    <script>window.__MANIFEST__ = ' + manifestStr + '</script>\n    \n    ' + mapToString(scripts, function (src) {
     return '<script type="text/javascript" src="' + src + '"></script>';
   }) + '\n  </body>\n</html>\n';
 };
@@ -88,7 +89,8 @@ var renderHtml = function renderHtml(_ref4) {
       _htmlDocOptions$metaT = htmlDocOptions.metaTags,
       metaTags = _htmlDocOptions$metaT === undefined ? [] : _htmlDocOptions$metaT,
       _htmlDocOptions$linkT = htmlDocOptions.linkTags,
-      linkTags = _htmlDocOptions$linkT === undefined ? [] : _htmlDocOptions$linkT;
+      linkTags = _htmlDocOptions$linkT === undefined ? [] : _htmlDocOptions$linkT,
+      manifest = htmlDocOptions.manifest;
 
 
   return renderHtmlTemplate({
@@ -99,7 +101,8 @@ var renderHtml = function renderHtml(_ref4) {
     configStr: JSON.stringify(config),
     scripts: scripts,
     metaTags: metaTags,
-    linkTags: linkTags
+    linkTags: linkTags,
+    manifestStr: JSON.stringify(manifest)
   });
 };
 
@@ -116,6 +119,7 @@ var renderApp = function renderApp(res, app, routeConfig) {
           type: 'text/css'
         });
       }
+      htmlDocOptions.manifest = manifestManager._manifest;
     }
 
     app.run({}).then(function (modules) {

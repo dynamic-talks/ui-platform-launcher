@@ -119,7 +119,7 @@ var renderApp = function renderApp(res, app, routeConfig) {
           type: 'text/css'
         });
       }
-      htmlDocOptions.manifest = manifestManager._manifest;
+      htmlDocOptions.manifest = manifestManager.getAllPaths();
     }
 
     app.run({}).then(function (modules) {

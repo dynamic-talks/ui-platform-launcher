@@ -8,8 +8,8 @@ exports.default = function (_ref) {
   var rootPath = _ref.rootPath,
       createServerIocContainer = _ref.createServerIocContainer,
       configPath = _ref.configPath,
-      _ref$assetsManifest = _ref.assetsManifest,
-      assetsManifest = _ref$assetsManifest === undefined ? {} : _ref$assetsManifest;
+      _ref$assetsManifestPa = _ref.assetsManifestPath,
+      assetsManifestPath = _ref$assetsManifestPa === undefined ? {} : _ref$assetsManifestPa;
 
   var app = (0, _express2.default)();
   var baseConfigPath = _path2.default.join(rootPath, 'config', 'base.yaml');
@@ -22,7 +22,7 @@ exports.default = function (_ref) {
   var iocContainer = createServerIocContainer({
     baseConfigPath: baseConfigPath,
     configPath: configPath,
-    assetsManifest: assetsManifest
+    assetsManifestPath: assetsManifestPath
   });
 
   app.use(_express2.default.json());

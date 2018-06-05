@@ -51,41 +51,21 @@ function configureExpressApp(app, appsParams) {
     var rootDir = _ref2.rootDir,
         name = _ref2.name,
         version = _ref2.version,
-        configPath = _ref2.configPath;
-
-    var baseYamlConfigPath = _path2.default.join(rootDir, 'config', 'base.yaml');
-    var baseJsonConfigPath = _path2.default.join(rootDir, 'config', 'base.json');
-    var baseConfigPath = void 0;
-
-    // decide which base config file use in `YAML` or `JSON` format
-    // `YAML` has precedence over `JSON`
-    if (_fs2.default.existsSync(baseYamlConfigPath)) {
-      baseConfigPath = baseYamlConfigPath;
-    } else if (_fs2.default.existsSync(baseJsonConfigPath)) {
-      baseConfigPath = baseJsonConfigPath;
-    } else {
-      throw new Error('Base configuration file isn\'t found in "' + _path2.default.join(rootDir, 'config') + '", in both formats: YAML and JSON');
-    }
+        configReaderType = _ref2.configReaderType,
+        configReaderParams = _ref2.configReaderParams;
 
     // todo: think about better solution
-
     var _require = require(rootDir + '/node_modules/ui-platform-core/dist/lib/ui-application/server.ioc-container'),
         createServerIocContainer = _require.createServerIocContainer;
 
-    var absConfigPath = void 0;
-
-    if (configPath) {
-      absConfigPath = _path2.default.join(rootDir, configPath);
-    } else {
-      absConfigPath = baseConfigPath;
-    }
-
     // initialize root IoC container
+
+
     var iocContainer = createServerIocContainer({
-      configPath: absConfigPath,
       // todo: `build-manifest.json` name is hardcored, should be configured somehow
       assetsManifestPath: _path2.default.join(rootDir, 'build-manifest.json'),
-      baseConfigPath: baseConfigPath
+      configReaderType: configReaderType,
+      configReaderParams: configReaderParams
     });
 
     var namespace = name ? '/' + name : '/';
@@ -121,15 +101,17 @@ function configureExpressApp(app, appsParams) {
  *
  * @param {String} rootDir
  * @param {String} version
- * @param {String} configPath
+ * @param {String} configReaderType
+ * @param {Object} configReaderParams
  * @returns {express}
  */
 function initSingleApp(_ref3) {
   var rootDir = _ref3.rootDir,
       version = _ref3.version,
-      configPath = _ref3.configPath;
+      configReaderType = _ref3.configReaderType,
+      configReaderParams = _ref3.configReaderParams;
 
-  return configureExpressApp((0, _express2.default)(), [{ rootDir: rootDir, version: version, configPath: configPath }]);
+  return configureExpressApp((0, _express2.default)(), [{ rootDir: rootDir, version: version, configReaderType: configReaderType, configReaderParams: configReaderParams }]);
 }
 
 /**

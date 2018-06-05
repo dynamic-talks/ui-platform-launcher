@@ -12,6 +12,7 @@
     "glob": "^7.1.2",
     "http-errors": "~1.6.2",
     "libioc": "^1.0.6",
+    "minimist": "^1.2.0",
     "ui-platform-core": "dynamic-talks/ui-platform-core#master"
   },
   "devDependencies": {

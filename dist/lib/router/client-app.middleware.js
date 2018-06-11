@@ -96,7 +96,7 @@ var renderHtml = function renderHtml(_ref4) {
     headerTitle: title,
     modulesStr: modulesStr.join(''),
     stateStr: JSON.stringify(state),
-    configStr: JSON.stringify(config),
+    configStr: JSON.stringify(config.get()),
     scripts: scripts,
     metaTags: metaTags,
     linkTags: linkTags

@@ -33,7 +33,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  *
  * @param {Object} app - instance of Express server
  * @param {Array} appsParams - set of setting for each app
- * @returns {express}
+ * @returns {Promise<express>}
  */
 function configureExpressApp(app, appsParams) {
   app.use(_express2.default.json());
@@ -46,54 +46,77 @@ function configureExpressApp(app, appsParams) {
     app.use(_express2.default.static(_path2.default.join(rootDir, 'public')));
   });
 
-  // initialize app pages
-  appsParams.forEach(function (_ref2) {
+  return Promise
+  // initialize configuration manager for each app
+  .all(appsParams.map(function (_ref2) {
     var rootDir = _ref2.rootDir,
-        name = _ref2.name,
-        version = _ref2.version,
-        configReaderType = _ref2.configReaderType,
-        configReaderParams = _ref2.configReaderParams;
+        appName = _ref2.appName,
+        configReaderType = _ref2.configReaderType;
 
-    // todo: think about better solution
-    var _require = require(rootDir + '/node_modules/ui-platform-core/dist/lib/ui-application/server.ioc-container'),
-        createServerIocContainer = _require.createServerIocContainer;
+    var _require = require(rootDir + '/node_modules/ui-platform-core/dist/lib/configuration-manager'),
+        ConfigurationManager = _require.ConfigurationManager;
 
-    // initialize root IoC container
+    var configManager = new ConfigurationManager(rootDir);
+
+    return configManager.initialize({ appName: appName, readerType: configReaderType });
+  }))
+  // As soon as config managers are ready do the rest of initialization
+  .then(function (configCollection) {
+
+    appsParams
+    // merge each app params with an appropriate config
+    .map(function (param, i) {
+      return Object.assign({ config: configCollection[i] }, param);
+    })
+    // initialize app pages
+    .forEach(function (_ref3) {
+      var rootDir = _ref3.rootDir,
+          appName = _ref3.appName,
+          config = _ref3.config,
+          version = _ref3.version,
+          _ref3$useAppURIPrefix = _ref3.useAppURIPrefix,
+          useAppURIPrefix = _ref3$useAppURIPrefix === undefined ? true : _ref3$useAppURIPrefix;
+
+      // todo: think about better solution
+      var _require2 = require(rootDir + '/node_modules/ui-platform-core/dist/lib/ui-application/server.ioc-container'),
+          createServerIocContainer = _require2.createServerIocContainer;
+
+      // initialize root IoC container
 
 
-    var iocContainer = createServerIocContainer({
-      // todo: `build-manifest.json` name is hardcored, should be configured somehow
-      assetsManifestPath: _path2.default.join(rootDir, 'build-manifest.json'),
-      configReaderType: configReaderType,
-      configReaderParams: configReaderParams
+      var iocContainer = createServerIocContainer({
+        // todo: `build-manifest.json` appName is hardcored, should be configured somehow
+        assetsManifestPath: _path2.default.join(rootDir, 'build-manifest.json'),
+        config: config
+      });
+
+      var namespace = useAppURIPrefix ? '/' + appName : '/';
+
+      app.use(namespace, (0, _uiRouter.uiRouterFactory)({
+        rootDir: rootDir,
+        iocContainer: iocContainer
+      }));
     });
 
-    var namespace = name ? '/' + name : '/';
+    // catch 404 and forward to error handler
+    app.use(function (req, res, next) {
+      next((0, _httpErrors2.default)(404));
+    });
 
-    app.use(namespace, (0, _uiRouter.uiRouterFactory)({
-      rootDir: rootDir,
-      iocContainer: iocContainer
-    }));
+    // error handler
+    app.use(function (err, req, res) {
+      // set locals, only providing error in development
+      res.locals.message = err.message;
+      res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+      // render the error page
+      res.status(err.status || 500);
+      res.json(err);
+      console.error(err);
+    });
+
+    return app;
   });
-
-  // catch 404 and forward to error handler
-  app.use(function (req, res, next) {
-    next((0, _httpErrors2.default)(404));
-  });
-
-  // error handler
-  app.use(function (err, req, res) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-    // render the error page
-    res.status(err.status || 500);
-    res.json(err);
-    console.error(err);
-  });
-
-  return app;
 }
 
 /**
@@ -101,27 +124,33 @@ function configureExpressApp(app, appsParams) {
  *
  * @param {String} rootDir
  * @param {String} version
+ * @param {String} appName - app appName
  * @param {String} configReaderType
- * @param {Object} configReaderParams
- * @returns {express}
+ * @returns {Promise<express>}
  */
-function initSingleApp(_ref3) {
-  var rootDir = _ref3.rootDir,
-      version = _ref3.version,
-      configReaderType = _ref3.configReaderType,
-      configReaderParams = _ref3.configReaderParams;
+function initSingleApp(_ref4) {
+  var rootDir = _ref4.rootDir,
+      appName = _ref4.appName,
+      version = _ref4.version,
+      configReaderType = _ref4.configReaderType;
 
-  return configureExpressApp((0, _express2.default)(), [{ rootDir: rootDir, version: version, configReaderType: configReaderType, configReaderParams: configReaderParams }]);
+  return configureExpressApp((0, _express2.default)(), [{ appName: appName, rootDir: rootDir, version: version, configReaderType: configReaderType, useAppURIPrefix: false }]);
 }
 
 /**
  * Initialize set of apps (Micro-sites), which set of artifact folders placed in supplied `appsPath`
  *
  * @param {String} appsPath
- * @returns {express}
+ * @param {String} configType
+ * @returns {Promise<express>}
  */
-function initMultipleApps(_ref4) {
-  var appsPath = _ref4.appsPath;
+function initMultipleApps(_ref5) {
+  var appsPath = _ref5.appsPath,
+      configReaderType = _ref5.configReaderType;
 
-  return configureExpressApp((0, _express2.default)(), (0, _mutipleAppsSettings.resolveMultipleAppsSettings)(appsPath));
+  var appParams = (0, _mutipleAppsSettings.resolveMultipleAppsSettings)(appsPath).map(function (params) {
+    return Object.assign({ configReaderType: configReaderType }, params);
+  });
+
+  return configureExpressApp((0, _express2.default)(), appParams);
 }

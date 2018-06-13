@@ -1,11 +1,19 @@
-const cliArgs = require('cli-args');
-const initMultipleApp = require('../lib/init-multiple-apps').default;
+const cliArgs = require('minimist')(process.argv.slice(2));
+const { initMultipleApps } = require('../lib/app/init-app');
 const launchApp = require('./www');
 
-const args = cliArgs(process.argv.slice(2));
+if (! cliArgs.p) {
+  throw new Error('[multiple-apps-www] `-p` isn\'t provided');
+}
+
+if (! cliArgs['config-type']) {
+  throw new Error('[multiple-apps-www] `--config-type` isn\'t provided');
+}
 
 
-
-launchApp(initMultipleApp({
-  appsPath: args.p
-}));
+initMultipleApps({
+  appsPath: cliArgs.p,
+  configReaderType: cliArgs['config-type'],
+})
+  .then(app => launchApp(app))
+  .catch(e => console.error(e));
